@@ -34,8 +34,9 @@ let BASE_SHA;
   const HEAD_SHA = execSync(`git rev-parse HEAD`, { encoding: "utf-8" });
 
   process.stdout.write("\n");
-  process.stdout.write(`Object.keys(eventPayload): \n`);
-  process.stdout.write(Object.keys(eventPayload));
+  process.stdout.write(
+    `Object.keys(eventPayload): ${Object.keys(eventPayload)}\n`
+  );
   process.stdout.write(`eventPayload.action: ${eventPayload.action}`);
   process.stdout.write(
     `eventPayload.pullRequest.merged: ${eventPayload.pullRequest.merged}`
