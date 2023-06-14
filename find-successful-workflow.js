@@ -151,14 +151,15 @@ async function findSuccessfulCommit(
         status: "success",
       }
     )
-    .then(({ data: { workflow_runs } }) =>
-      workflow_runs.map((run) => {
+    .then(({ data: { workflow_runs } }) => {
+      process.stdout.write("processing response");
+      return workflow_runs.map((run) => {
         process.stdout.write(`run.head_sha: ${run.head_sha}`);
         process.stdout.write(`run.head_commit: ${run.head_commit}`);
         process.stdout.write(`run.head_commit.id: ${run.head_commit.id}`);
         return run.head_commit.id;
-      })
-    );
+      });
+    });
 
   return await findExistingCommit(shas, branch);
 }
