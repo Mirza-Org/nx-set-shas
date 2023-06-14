@@ -88,8 +88,6 @@ let BASE_SHA;
     }
   }
 
-  core.setFailed("DEBUG FAILURE");
-
   const stripNewLineEndings = (sha) => sha.replace("\n", "");
   core.setOutput("base", stripNewLineEndings(BASE_SHA));
   core.setOutput("head", stripNewLineEndings(HEAD_SHA));
@@ -154,15 +152,17 @@ async function findSuccessfulCommit(
     .then(({ data: { workflow_runs } }) =>
       workflow_runs.map((run) => run.head_branch)
     );
+
+  process.stdout.write("\n");
   process.stdout.write(`branches : ${branches}`);
 
   // Get the latest merge_commit from a closed
-  const shas = await branches.map(async (branch) => {
+  const shas = await branches.map(async (pr_branch) => {
     await octokit
       .request(`GET /repos/${owner}/${repo}/pulls`, {
         owner,
         repo,
-        base: branch,
+        base: pr_branch,
         head: `${owner}:${branch}`,
         state: "closed",
         per_page: 1,
@@ -170,10 +170,12 @@ async function findSuccessfulCommit(
       .then((pull_requests) =>
         pull_requests.map((pr) => pr.merge_commit_sha || null)
       );
-  });
+  })();
 
+  process.stdout.write("\n");
   process.stdout.write(`shas : ${shas}`);
 
+  throw new Exception("DEBUG FAILURE");
   return await findExistingCommit(shas, branch);
 }
 
