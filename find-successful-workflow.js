@@ -152,7 +152,12 @@ async function findSuccessfulCommit(
       }
     )
     .then(({ data: { workflow_runs } }) =>
-      workflow_runs.map((run) => run.head_commit.id)
+      workflow_runs.map((run) => {
+        process.stdout.write(`run.head_sha: ${run.head_sha}`);
+        process.stdout.write(`run.head_commit: ${run.head_commit}`);
+        process.stdout.write(`run.head_commit.id: ${run.head_commit.id}`);
+        return run.head_commit.id;
+      })
     );
 
   return await findExistingCommit(shas, branch);
@@ -165,7 +170,6 @@ async function findSuccessfulCommit(
  * @returns {string?}
  */
 async function findExistingCommit(shas, branchName) {
-  await test();
   for (const commitSha of shas) {
     await testCommit(commitSha);
     if (await commitExists(commitSha, branchName)) {
@@ -173,30 +177,6 @@ async function findExistingCommit(shas, branchName) {
     }
   }
   return undefined;
-}
-
-/**
- * Run git branch -r --format '%(refname)' as a test
- * @returns
- */
-async function test() {
-  try {
-    process.stdout.write(
-      execSync(`git status`, {
-        stdio: ["pipe", "pipe", null],
-      })
-    );
-    process.stdout.write(
-      execSync(`git branch -r --format '%(refname)'`, {
-        stdio: ["pipe", "pipe", null],
-      })
-    );
-    return true;
-  } catch (e) {
-    process.stderr.write("exception in test");
-    process.stderr.write(e.message);
-    return false;
-  }
 }
 
 /**
