@@ -165,8 +165,8 @@ async function findSuccessfulCommit(
       .request(`GET /repos/${owner}/${repo}/pulls`, {
         owner,
         repo,
-        base: pr_branch,
-        head: `${owner}:${branch}`,
+        base: branch,
+        head: `${owner}:${pr_branch}`,
         state: "closed",
         per_page: 1,
       })
