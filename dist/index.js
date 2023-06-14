@@ -13868,7 +13868,7 @@ async function findSuccessfulCommit(
 
 /**
  * Get first existing commit
- * @param {string[]} commit_shas
+ * @param {string[]} shas
  * @param {string} branchName
  * @returns {string?}
  */
