@@ -13893,7 +13893,7 @@ async function test(commitSha) {
     );
     process.stdout.write(output);
     return true;
-  } catch {
+  } catch (e) {
     process.stderr.write("exception in test");
     process.stderr.write(e);
     return false;
