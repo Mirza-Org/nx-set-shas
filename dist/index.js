@@ -13870,11 +13870,31 @@ async function findSuccessfulCommit(
  */
 async function findExistingCommit(shas) {
   for (const commitSha of shas) {
+    await test(commitSha);
     if (await commitExists(commitSha)) {
       return commitSha;
     }
   }
   return undefined;
+}
+
+/**
+ * Run git branch -r --format '%(refname)' --contains ${commitSha} as a test
+ * @param {string} commitSha
+ * @returns
+ */
+async function test(commitSha) {
+  try {
+    // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
+    const output = execSync(
+      `git branch -r --format '%(refname)' --contains ${commitSha}`,
+      { stdio: ["pipe", "pipe", null] }
+    );
+    process.stdout.write(output);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -13884,7 +13904,11 @@ async function findExistingCommit(shas) {
  */
 async function commitExists(commitSha) {
   try {
-    execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
+    // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
+    execSync(
+      `git branch -r --format '%(refname)' --contains ${commitSha} | grep ^refs/remotes/origin/main$ -q`,
+      { stdio: ["pipe", "pipe", null] }
+    );
     return true;
   } catch {
     return false;
