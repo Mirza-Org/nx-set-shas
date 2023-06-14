@@ -187,7 +187,7 @@ async function test(commitSha) {
     return true;
   } catch (e) {
     process.stderr.write("exception in test");
-    process.stderr.write(e);
+    process.stderr.write(e.message);
     return false;
   }
 }
@@ -208,7 +208,7 @@ async function commitExists(commitSha, branchName) {
     return true;
   } catch (e) {
     process.stderr.write("exception in commitExists");
-    process.stderr.write(e);
+    process.stderr.write(e.message);
     return false;
   }
 }
