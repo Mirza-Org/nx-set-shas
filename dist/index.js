@@ -13967,6 +13967,9 @@ async function commitExists(commitSha, branchName) {
       execSync(`git branch -r --format '%(refname)' --contains ${commitSha}`, {
         stdio: ["pipe", "pipe", null],
       }) || "";
+    process.stderr.write("\n");
+    process.stderr.write(`typeof output:`);
+    process.stderr.write(typeof output);
     const branches = output.split("\n");
     return (
       branches
