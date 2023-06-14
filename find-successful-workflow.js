@@ -88,6 +88,8 @@ let BASE_SHA;
     }
   }
 
+  core.setFailed("DEBUG FAILURE");
+
   const stripNewLineEndings = (sha) => sha.replace("\n", "");
   core.setOutput("base", stripNewLineEndings(BASE_SHA));
   core.setOutput("head", stripNewLineEndings(HEAD_SHA));
