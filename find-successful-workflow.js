@@ -33,19 +33,10 @@ let BASE_SHA;
 
   const HEAD_SHA = execSync(`git rev-parse HEAD`, { encoding: "utf-8" });
 
-  process.stdout.write("\n");
-  process.stdout.write(
-    `Object.keys(eventPayload): ${Object.keys(eventPayload)}\n`
-  );
-  process.stdout.write(`eventPayload.action: ${eventPayload.action}`);
-  process.stdout.write(
-    `eventPayload.pull_request.merged: ${eventPayload.pull_request.merged}`
-  );
-
   const closedPullRequest =
     eventName == "pull_request" &&
     eventPayload.action == "closed" &&
-    eventPayload.pullRequest.merged == true;
+    eventPayload.pull_request.merged == true;
 
   if (eventName === "pull_request" && !closedPullRequest) {
     BASE_SHA = execSync(`git merge-base origin/${mainBranchName} HEAD`, {
