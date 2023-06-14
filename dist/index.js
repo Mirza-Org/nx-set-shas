@@ -13886,6 +13886,9 @@ async function findSuccessfulCommit(
         process.stdout.write(
           `Object.keys(pull_requests.data):${Object.keys(pull_requests.data)}`
         );
+        process.stdout.write("\n");
+        process.stdout.write(`typeof pull_requests.data:`);
+        process.stdout.write(typeof pull_requests.data);
         pull_requests.data.map((pr) => {
           process.stdout.write("\n");
           process.stdout.write(`pr: ${pr}\ntypeof pr: `);
