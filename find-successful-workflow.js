@@ -154,7 +154,8 @@ async function findSuccessfulCommit(
     );
 
   process.stdout.write("\n");
-  process.stdout.write(`branches : ${branches}`);
+  process.stdout.write(`branches : ${branches}\ntypeof branches: `);
+  process.stdout.write(typeof branches);
 
   // Get the latest merge_commit from a closed
   const shas = await branches.map(async (pr_branch) => {
@@ -167,9 +168,14 @@ async function findSuccessfulCommit(
         state: "closed",
         per_page: 1,
       })
-      .then((pull_requests) =>
-        pull_requests.map((pr) => pr.merge_commit_sha || null)
-      );
+      .then((pull_requests) => {
+        process.stdout.write(`pull_requests: ${pull_requests}`);
+        process.stdout.write("\n");
+        process.stdout.write(
+          `pull_requests: ${pull_requests}\ntypeof pull_requests: `
+        );
+        process.stdout.write(typeof pull_requests);
+      });
   })();
 
   process.stdout.write("\n");
