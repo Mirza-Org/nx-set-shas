@@ -244,11 +244,11 @@ function commitExists(commitSha, branchName) {
     process.stderr.write(typeof branches);
     process.stderr.write("\n");
     process.stderr.write(`branches:${branches}`);
-    return (
-      branches
-        .filter((branch) => branch == `refs/remotes/origin/${branchName}`)
-        .length() > 0
-    );
+    for (const branch of branches) {
+      if (branch == `refs/remotes/origin/${branchName}`) {
+        return true;
+      }
+    }
   } catch (e) {
     process.stderr.write("\n");
     process.stderr.write("exception in commitExists");
