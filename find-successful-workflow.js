@@ -174,6 +174,10 @@ async function findSuccessfulCommit(
         process.stdout.write(
           `Object.keys(pull_requests):${Object.keys(pull_requests)}`
         );
+        process.stdout.write("\n");
+        process.stdout.write(
+          `Object.keys(pull_requests.data):${Object.keys(pull_requests.data)}`
+        );
         for (pr of pull_requests) {
           process.stdout.write("\n");
           process.stdout.write(`pr: ${pr}\ntypeof pr: `);
