@@ -13946,7 +13946,7 @@ function commitExists(commitSha, branchName) {
     process.stderr.write("\n");
     process.stderr.write(`typeof output:`);
     process.stderr.write(typeof output);
-    const branches = output.split("\n");
+    const branches = `${output}`.split("\n");
     return (
       branches
         .filter((branch) => branch == `refs/remotes/origin/${branchName}`)
