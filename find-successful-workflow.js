@@ -157,7 +157,7 @@ async function findSuccessfulCommit(
   process.stdout.write(`branches : ${branches}`);
 
   // Get the latest merge_commit from a closed
-  const shas = branches.map(async (branch) => {
+  const shas = await branches.map(async (branch) => {
     await octokit
       .request(`GET /repos/${owner}/${repo}/pulls`, {
         owner,
