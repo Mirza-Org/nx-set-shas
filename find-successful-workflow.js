@@ -178,12 +178,12 @@ async function findSuccessfulCommit(
         process.stdout.write(
           `Object.keys(pull_requests.data):${Object.keys(pull_requests.data)}`
         );
-        for (pr of pull_requests.data) {
+        pull_requests.data.map((pr) => {
           process.stdout.write("\n");
           process.stdout.write(`pr: ${pr}\ntypeof pr: `);
           process.stdout.write(typeof pr);
           shas.push(pr.merge_commit_sha);
-        }
+        });
       });
   }
 
