@@ -142,8 +142,7 @@ async function findSuccessfulCommit(
       {
         owner,
         repo,
-        // on non-push workflow runs we do not have branch property
-        branch: lastSuccessfulEvent !== "push" ? undefined : branch,
+        branch,
         workflow_id,
         event: lastSuccessfulEvent,
         status: "success",
