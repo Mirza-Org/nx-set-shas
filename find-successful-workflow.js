@@ -138,7 +138,7 @@ async function findSuccessfulCommit(
     );
   }
   // fetch all workflow runs on a given repo/branch/workflow with push and success
-  const shas = await octokit
+  const branches = await octokit
     .request(
       `GET /repos/${owner}/${repo}/actions/workflows/${workflow_id}/runs`,
       {
@@ -151,15 +151,28 @@ async function findSuccessfulCommit(
         status: "success",
       }
     )
-    .then(({ data: { workflow_runs } }) => {
-      process.stdout.write("processing response");
-      return workflow_runs.map((run) => {
-        process.stdout.write(`run.head_sha: ${run.head_sha}`);
-        process.stdout.write(`run.head_commit: ${run.head_commit}`);
-        process.stdout.write(`run.head_commit.id: ${run.head_commit.id}`);
-        return run.head_commit.id;
-      });
-    });
+    .then(({ data: { workflow_runs } }) =>
+      workflow_runs.map((run) => run.head_branch)
+    );
+  process.stdout.write(`branches : ${branches}`);
+
+  // Get the latest merge_commit from a closed
+  const shas = branches.map(async (branch) => {
+    await octokit
+      .request(`GET /repos/${owner}/${repo}/pulls`, {
+        owner,
+        repo,
+        base: branch,
+        head: `${owner}:${branch}`,
+        state: "closed",
+        per_page: 1,
+      })
+      .then(({ data: { pull_requests } }) =>
+        pull_requests.map((pr) => pr.merge_commit_sha || null)
+      );
+  });
+
+  process.stdout.write(`shas : ${shas}`);
 
   return await findExistingCommit(shas, branch);
 }
