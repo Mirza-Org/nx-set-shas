@@ -185,6 +185,8 @@ async function test(commitSha) {
     process.stdout.write(output);
     return true;
   } catch {
+    process.stderr.write("exception in test");
+    process.stderr.write(e);
     return false;
   }
 }
@@ -192,17 +194,20 @@ async function test(commitSha) {
 /**
  * Check if given commit is valid
  * @param {string} commitSha
+ * @param {string} branchName
  * @returns {boolean}
  */
-async function commitExists(commitSha) {
+async function commitExists(commitSha, branchName) {
   try {
     // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
     execSync(
-      `git branch -r --format '%(refname)' --contains ${commitSha} | grep ^refs/remotes/origin/main$ -q`,
+      `git branch -r --format '%(refname)' --contains ${commitSha} | grep ^refs/remotes/origin/${branchName}$ -q`,
       { stdio: ["pipe", "pipe", null] }
     );
     return true;
-  } catch {
+  } catch (e) {
+    process.stderr.write("exception in commitExists");
+    process.stderr.write(e);
     return false;
   }
 }
