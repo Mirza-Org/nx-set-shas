@@ -153,18 +153,19 @@ async function findSuccessfulCommit(
       workflow_runs.map((run) => run.head_sha)
     );
 
-  return await findExistingCommit(shas);
+  return await findExistingCommit(shas, branch);
 }
 
 /**
  * Get first existing commit
  * @param {string[]} commit_shas
+ * @param {string} branchName
  * @returns {string?}
  */
-async function findExistingCommit(shas) {
+async function findExistingCommit(shas, branchName) {
   for (const commitSha of shas) {
     await test(commitSha);
-    if (await commitExists(commitSha)) {
+    if (await commitExists(commitSha, branchName)) {
       return commitSha;
     }
   }
