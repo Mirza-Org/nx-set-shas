@@ -13871,8 +13871,9 @@ async function findSuccessfulCommit(
  * @returns {string?}
  */
 async function findExistingCommit(shas, branchName) {
+  await test();
   for (const commitSha of shas) {
-    await test(commitSha);
+    await testCommit(commitSha);
     if (await commitExists(commitSha, branchName)) {
       return commitSha;
     }
@@ -13881,11 +13882,29 @@ async function findExistingCommit(shas, branchName) {
 }
 
 /**
+ * Run git branch -r --format '%(refname)' as a test
+ * @returns
+ */
+async function test() {
+  try {
+    const output = execSync(`git branch -r --format '%(refname)'`, {
+      stdio: ["pipe", "pipe", null],
+    });
+    process.stdout.write(output);
+    return true;
+  } catch (e) {
+    process.stderr.write("exception in test");
+    process.stderr.write(e.message);
+    return false;
+  }
+}
+
+/**
  * Run git branch -r --format '%(refname)' --contains ${commitSha} as a test
  * @param {string} commitSha
  * @returns
  */
-async function test(commitSha) {
+async function testCommit(commitSha) {
   try {
     // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
     const output = execSync(
@@ -13895,7 +13914,7 @@ async function test(commitSha) {
     process.stdout.write(output);
     return true;
   } catch (e) {
-    process.stderr.write("exception in test");
+    process.stderr.write("exception in testCommit");
     process.stderr.write(e.message);
     return false;
   }
