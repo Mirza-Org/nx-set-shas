@@ -179,10 +179,16 @@ async function findExistingCommit(shas, branchName) {
  */
 async function test() {
   try {
-    const output = execSync(`git branch -r --format '%(refname)'`, {
-      stdio: ["pipe", "pipe", null],
-    });
-    process.stdout.write(output);
+    process.stdout.write(
+      execSync(`git status`, {
+        stdio: ["pipe", "pipe", null],
+      })
+    );
+    process.stdout.write(
+      execSync(`git branch -r --format '%(refname)'`, {
+        stdio: ["pipe", "pipe", null],
+      })
+    );
     return true;
   } catch (e) {
     process.stderr.write("exception in test");
