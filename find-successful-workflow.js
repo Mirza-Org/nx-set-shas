@@ -167,7 +167,7 @@ async function findSuccessfulCommit(
         state: "closed",
         per_page: 1,
       })
-      .then(({ data: { pull_requests } }) =>
+      .then((pull_requests) =>
         pull_requests.map((pr) => pr.merge_commit_sha || null)
       );
   });
