@@ -153,13 +153,17 @@ async function findSuccessfulCommit(
       workflow_runs.map((run) => run.head_branch)
     );
 
+  let uniqueBranches = [...new Set(branches)];
+
   process.stdout.write("\n");
-  process.stdout.write(`branches : ${branches}\ntypeof branches: `);
-  process.stdout.write(typeof branches);
+  process.stdout.write(
+    `uniqueBranches : ${uniqueBranches}\ntypeof uniqueBranches: `
+  );
+  process.stdout.write(typeof uniqueBranches);
 
   // Get the latest merge_commit from a closed
   let shas = [];
-  for (const pr_branch of branches) {
+  for (const pr_branch of uniqueBranches) {
     process.stdout.write(`pr_branch: ${pr_branch}`);
     await octokit
       .request(`GET /repos/${owner}/${repo}/pulls`, {
@@ -182,9 +186,7 @@ async function findSuccessfulCommit(
         process.stdout.write("\n");
         process.stdout.write(`typeof pull_requests.data:`);
         process.stdout.write(typeof pull_requests.data);
-        for (const pr of pull_requests.data) {
-          process.stdout.write(`const pr: ${pr}`);
-        }
+
         pull_requests.data.map((pr) => {
           process.stdout.write(`map pr:${pr}`);
           process.stdout.write("\n");
@@ -195,11 +197,12 @@ async function findSuccessfulCommit(
       });
   }
 
-  process.stdout.write("\n");
-  process.stdout.write(`shas : ${shas}`);
+  let uniqueShas = [...new Set(shas)];
 
-  throw new Exception("DEBUG FAILURE");
-  return await findExistingCommit(shas, branch);
+  process.stdout.write("\n");
+  process.stdout.write(`uniqueShas : ${uniqueShas}`);
+
+  return await findExistingCommit(uniqueShas, branch);
 }
 
 /**
