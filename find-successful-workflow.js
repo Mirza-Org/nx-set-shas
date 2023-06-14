@@ -249,13 +249,22 @@ async function testCommit(commitSha) {
  * @returns {boolean}
  */
 async function commitExists(commitSha, branchName) {
+  process.stderr.write("\n");
+  process.stderr.write(`testing commit ${commitSha}`);
   try {
     // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
-    execSync(
-      `git branch -r --format '%(refname)' --contains ${commitSha} | grep ^refs/remotes/origin/${branchName}$ -q`,
-      { stdio: ["pipe", "pipe", null] }
+    const output = execSync(
+      `git branch -r --format '%(refname)' --contains ${commitSha}`,
+      {
+        stdio: ["pipe", "pipe", null],
+      }
     );
-    return true;
+    const branches = output.split("\n");
+    return (
+      branches
+        .filter((branch) => branch == `refs/remotes/origin/${branchName}`)
+        .length() > 0
+    );
   } catch (e) {
     process.stderr.write("exception in commitExists");
     process.stderr.write(e.message);
