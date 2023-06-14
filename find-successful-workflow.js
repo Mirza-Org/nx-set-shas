@@ -39,7 +39,7 @@ let BASE_SHA;
   );
   process.stdout.write(`eventPayload.action: ${eventPayload.action}`);
   process.stdout.write(
-    `eventPayload.pullRequest.merged: ${eventPayload.pullRequest.merged}`
+    `eventPayload.pull_request.merged: ${eventPayload.pull_request.merged}`
   );
 
   const closedPullRequest =
