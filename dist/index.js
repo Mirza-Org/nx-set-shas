@@ -13866,7 +13866,7 @@ async function findSuccessfulCommit(
   process.stdout.write(typeof branches);
 
   // Get the latest merge_commit from a closed
-  const shas = await branches.map(async (pr_branch) => {
+  for (const pr_branch of branches) {
     await octokit
       .request(`GET /repos/${owner}/${repo}/pulls`, {
         owner,
@@ -13877,14 +13877,13 @@ async function findSuccessfulCommit(
         per_page: 1,
       })
       .then((pull_requests) => {
-        process.stdout.write(`pull_requests: ${pull_requests}`);
         process.stdout.write("\n");
         process.stdout.write(
           `pull_requests: ${pull_requests}\ntypeof pull_requests: `
         );
         process.stdout.write(typeof pull_requests);
       });
-  })();
+  }
 
   process.stdout.write("\n");
   process.stdout.write(`shas : ${shas}`);
