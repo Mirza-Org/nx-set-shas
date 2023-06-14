@@ -13941,9 +13941,11 @@ async function testCommit(commitSha) {
       `git branch -r --format '%(refname)' --contains ${commitSha}`,
       { stdio: ["pipe", "pipe", null] }
     );
+    process.stderr.write("\n");
     process.stdout.write(output);
     return true;
   } catch (e) {
+    process.stderr.write("\n");
     process.stderr.write("exception in testCommit");
     process.stderr.write(e.message);
     return false;
@@ -13961,12 +13963,10 @@ async function commitExists(commitSha, branchName) {
   process.stderr.write(`testing commit ${commitSha}`);
   try {
     // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
-    const output = execSync(
-      `git branch -r --format '%(refname)' --contains ${commitSha}`,
-      {
+    const output =
+      execSync(`git branch -r --format '%(refname)' --contains ${commitSha}`, {
         stdio: ["pipe", "pipe", null],
-      }
-    );
+      }) || "";
     const branches = output.split("\n");
     return (
       branches
@@ -13974,6 +13974,7 @@ async function commitExists(commitSha, branchName) {
         .length() > 0
     );
   } catch (e) {
+    process.stderr.write("\n");
     process.stderr.write("exception in commitExists");
     process.stderr.write(e.message);
     return false;
