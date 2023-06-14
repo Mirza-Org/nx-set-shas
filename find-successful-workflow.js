@@ -152,7 +152,7 @@ async function findSuccessfulCommit(
       }
     )
     .then(({ data: { workflow_runs } }) =>
-      workflow_runs.map((run) => run.head_sha)
+      workflow_runs.map((run) => run.head_commit.id)
     );
 
   return await findExistingCommit(shas, branch);
