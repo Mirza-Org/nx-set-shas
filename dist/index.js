@@ -13863,6 +13863,12 @@ async function findSuccessfulCommit(
 
   let uniqueBranches = [...new Set(branches)];
 
+  process.stdout.write("\n");
+  process.stdout.write(
+    `uniqueBranches : ${uniqueBranches}\ntypeof uniqueBranches: `
+  );
+  process.stdout.write(typeof uniqueBranches);
+
   // Get the latest merge_commit from a closed
   let shas = [];
   for (const pr_branch of uniqueBranches) {
@@ -13877,7 +13883,18 @@ async function findSuccessfulCommit(
         per_page: 1,
       })
       .then((pull_requests) => {
+        process.stdout.write("\n");
+        process.stdout.write(
+          `Object.keys(pull_requests):${Object.keys(pull_requests)}`
+        );
+
         pull_requests.data.map((pr) => {
+          process.stdout.write("\n");
+          process.stdout.write(`pr: ${pr}\ntypeof pr: `);
+          process.stdout.write(typeof pr);
+          process.stdout.write(`Object.keys(pr):${Object.keys(pr)}`);
+          process.stdout.write("\n");
+          process.stdout.write(`pr.merge_commit_sha: ${pr.merge_commit_sha}`);
           if (pr.merge_commit_sha !== undefined) {
             shas.push(pr.merge_commit_sha);
           }
@@ -13886,6 +13903,9 @@ async function findSuccessfulCommit(
   }
 
   let uniqueShas = [...new Set(shas)];
+
+  process.stdout.write("\n");
+  process.stdout.write(`uniqueShas : ${uniqueShas}`);
 
   return findExistingCommit(uniqueShas, branch);
 }
@@ -13912,13 +13932,23 @@ function findExistingCommit(shas, branchName) {
  * @returns {boolean}
  */
 function commitExists(commitSha, branchName) {
+  process.stderr.write("\n");
+  process.stderr.write(`testing commit ${commitSha}`);
   try {
     // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
     const output =
       execSync(`git branch -r --format '%(refname)' --contains ${commitSha}`, {
         stdio: ["pipe", "pipe", null],
       }) || "";
+    process.stderr.write("\n");
+    process.stderr.write(`typeof output:`);
+    process.stderr.write(typeof output);
     const branches = `${output}`.split("\n");
+    process.stderr.write("\n");
+    process.stderr.write(`typeof branches:`);
+    process.stderr.write(typeof branches);
+    process.stderr.write("\n");
+    process.stderr.write(`branches:${branches}`);
     for (const branch of branches) {
       if (branch == `refs/remotes/origin/${branchName}`) {
         return true;
@@ -13926,7 +13956,7 @@ function commitExists(commitSha, branchName) {
     }
   } catch (e) {
     process.stderr.write("\n");
-    process.stderr.write("exception in commitExists\n");
+    process.stderr.write("exception in commitExists");
     process.stderr.write(e.message);
     return false;
   }
