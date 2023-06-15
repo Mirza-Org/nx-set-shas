@@ -173,6 +173,8 @@ async function findSuccessfulCommit(
         head: `${owner}:${pr_branch}`,
         state: "closed",
         per_page: 1,
+        sort: updated,
+        direction: desc,
       })
       .then((pull_requests) => {
         process.stdout.write("\n");
@@ -184,72 +186,14 @@ async function findSuccessfulCommit(
           process.stdout.write("\n");
           process.stdout.write(`pr: ${pr}\ntypeof pr: `);
           process.stdout.write(typeof pr);
-          process.stdout.write(`Object.keys(pr):${Object.keys(pr)}`);
-          process.stdout.write("\n");
-          process.stdout.write(`pr.merge_commit_sha: ${pr.merge_commit_sha}`);
-          if (pr.merge_commit_sha !== undefined) {
-            shas.push(pr.merge_commit_sha);
+          process.stdout.write(`\npr.merge_commit_sha: ${pr.merge_commit_sha}`);
+          process.stdout.write(`\npr.merged_at: ${pr.merged_at}`);
+          if (pr.merged_at !== null && pr.merge_commit_sha !== undefined) {
+            return pr.merge_commit_sha;
           }
         });
       });
   }
 
-  let uniqueShas = [...new Set(shas)];
-
-  process.stdout.write("\n");
-  process.stdout.write(`uniqueShas : ${uniqueShas}`);
-
-  return findExistingCommit(uniqueShas, branch);
-}
-
-/**
- * Get first existing commit
- * @param {string[]} shas
- * @param {string} branchName
- * @returns {string?}
- */
-function findExistingCommit(shas, branchName) {
-  for (const commitSha of shas) {
-    if (commitExists(commitSha, branchName)) {
-      return commitSha;
-    }
-  }
-  return undefined;
-}
-
-/**
- * Check if given commit is valid
- * @param {string} commitSha
- * @param {string} branchName
- * @returns {boolean}
- */
-function commitExists(commitSha, branchName) {
-  process.stderr.write("\n");
-  process.stderr.write(`testing commit ${commitSha}`);
-  try {
-    // execSync(`git cat-file -e ${commitSha}`, { stdio: ["pipe", "pipe", null] });
-    const output =
-      execSync(`git branch -r --format '%(refname)' --contains ${commitSha}`, {
-        stdio: ["pipe", "pipe", null],
-      }) || "";
-    process.stderr.write("\n");
-    process.stderr.write(`typeof output:`);
-    process.stderr.write(typeof output);
-    const branches = `${output}`.split("\n");
-    process.stderr.write("\n");
-    process.stderr.write(`typeof branches:`);
-    process.stderr.write(typeof branches);
-    process.stderr.write("\n");
-    process.stderr.write(`branches:${branches}`);
-    for (const branch of branches) {
-      if (branch == `refs/remotes/origin/${branchName}`) {
-        return true;
-      }
-    }
-  } catch (e) {
-    process.stderr.write("\n");
-    process.stderr.write("exception in commitExists");
-    process.stderr.write(e.message);
-    return false;
-  }
+  return false;
 }
