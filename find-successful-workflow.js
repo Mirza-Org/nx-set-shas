@@ -184,8 +184,8 @@ async function findSuccessfulCommit(
         head: `${owner}:${pr_branch}`,
         state: "closed",
         per_page: 1,
-        sort: updated,
-        direction: desc,
+        sort: "updated",
+        direction: "desc",
       })
       .then((pull_requests) => {
         process.stdout.write("\n");
