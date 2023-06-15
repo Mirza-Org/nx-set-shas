@@ -13741,6 +13741,12 @@ let BASE_SHA;
 
   const HEAD_SHA = execSync(`git rev-parse HEAD`, { encoding: "utf-8" });
 
+  process.stdout.write(
+    `\nObject.keys(eventPayload.pull_request): ${Object.keys(
+      eventPayload.pull_request
+    )}\n`
+  );
+
   const closedPullRequest =
     eventName == "pull_request" &&
     eventPayload.action == "closed" &&
@@ -13752,13 +13758,15 @@ let BASE_SHA;
     });
   } else {
     try {
+      const eventHeadRef = eventPayload.pull_request.head.ref;
       BASE_SHA = await findSuccessfulCommit(
         workflowId,
         runId,
         owner,
         repo,
         mainBranchName,
-        lastSuccessfulEvent
+        lastSuccessfulEvent,
+        eventHeadRef
       );
     } catch (e) {
       core.setFailed(e.message);
@@ -13826,7 +13834,8 @@ async function findSuccessfulCommit(
   owner,
   repo,
   branch,
-  lastSuccessfulEvent
+  lastSuccessfulEvent,
+  eventHeadRef
 ) {
   const octokit = new Octokit();
   if (!workflow_id) {
@@ -13861,7 +13870,9 @@ async function findSuccessfulCommit(
       workflow_runs.map((run) => run.head_branch)
     );
 
-  let uniqueBranches = [...new Set(branches)];
+  let uniqueBranches = [...new Set(branches)].filter(
+    (branch) => branch !== eventHeadRef
+  );
 
   process.stdout.write("\n");
   process.stdout.write(
