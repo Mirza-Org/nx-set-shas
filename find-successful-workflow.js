@@ -173,7 +173,7 @@ async function findSuccessfulCommit(
   process.stdout.write(typeof uniqueBranches);
 
   // Get the latest merge_commit from a closed
-  let merge_commit_sha = false;
+  let merge_commit_sha = null;
   for (const pr_branch of uniqueBranches) {
     process.stdout.write(`pr_branch: ${pr_branch}`);
     merge_commit_sha = await octokit
@@ -203,7 +203,11 @@ async function findSuccessfulCommit(
             return pr.merge_commit_sha;
           }
         }
+        return null;
       });
+    if (merge_commit_sha !== null) {
+      return merge_commit_sha;
+    }
   }
 
   return merge_commit_sha;
