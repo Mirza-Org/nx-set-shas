@@ -13881,44 +13881,37 @@ async function findSuccessfulCommit(
   process.stdout.write(typeof uniqueBranches);
 
   // Get the latest merge_commit from a closed
-  let merge_commit_sha = null;
   for (const pr_branch of uniqueBranches) {
     process.stdout.write(`pr_branch: ${pr_branch}`);
-    merge_commit_sha = await octokit
-      .request(`GET /repos/${owner}/${repo}/pulls`, {
-        owner,
-        repo,
-        base: branch,
-        head: `${owner}:${pr_branch}`,
-        state: "closed",
-        per_page: 1,
-        sort: "updated",
-        direction: "desc",
-      })
-      .then((pull_requests) => {
-        process.stdout.write("\n");
-        process.stdout.write(
-          `Object.keys(pull_requests):${Object.keys(pull_requests)}`
-        );
+    pull_requests = await octokit.request(`GET /repos/${owner}/${repo}/pulls`, {
+      owner,
+      repo,
+      base: branch,
+      head: `${owner}:${pr_branch}`,
+      state: "closed",
+      per_page: 1,
+      sort: "updated",
+      direction: "desc",
+    });
 
-        for (const pr of pull_requests.data) {
-          process.stdout.write("\n");
-          process.stdout.write(`pr: ${pr}\ntypeof pr: `);
-          process.stdout.write(typeof pr);
-          process.stdout.write(`\npr.merge_commit_sha: ${pr.merge_commit_sha}`);
-          process.stdout.write(`\npr.merged: ${pr.merged}`);
-          if (pr.merged && pr.merge_commit_sha !== undefined) {
-            return pr.merge_commit_sha;
-          }
-        }
-        return null;
-      });
-    if (merge_commit_sha !== null) {
-      return merge_commit_sha;
+    process.stdout.write("\n");
+    process.stdout.write(
+      `Object.keys(pull_requests):${Object.keys(pull_requests)}`
+    );
+
+    for (const pr of pull_requests.data) {
+      process.stdout.write("\n");
+      process.stdout.write(`pr: ${pr}\ntypeof pr: `);
+      process.stdout.write(typeof pr);
+      process.stdout.write(`\npr.merge_commit_sha: ${pr.merge_commit_sha}`);
+      process.stdout.write(`\npr.merged: ${pr.merged}`);
+      if (pr.merged && pr.merge_commit_sha !== undefined) {
+        return pr.merge_commit_sha;
+      }
     }
   }
 
-  return merge_commit_sha;
+  return null;
 }
 
 })();
