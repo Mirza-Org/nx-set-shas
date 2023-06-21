@@ -196,8 +196,8 @@ async function findSuccessfulCommit(
       process.stdout.write(`pr: ${pr}\ntypeof pr: `);
       process.stdout.write(typeof pr);
       process.stdout.write(`\npr.merge_commit_sha: ${pr.merge_commit_sha}`);
-      process.stdout.write(`\npr.merged: ${pr.merged}`);
-      if (pr.merged && pr.merge_commit_sha !== undefined) {
+      process.stdout.write(`\npr.merged_at: ${pr.merged_at}`);
+      if (pr.merged_at !== undefined && pr.merge_commit_sha !== undefined) {
         return pr.merge_commit_sha;
       }
     }
